@@ -54,3 +54,15 @@ bin/rails test
 ```
 
 In development, `HOUSEHOLD_USERS` defaults to `Felipe,Anna`.
+
+### Updating Chart.js
+
+`bin/importmap pin chart.js` downloads only the main file, and jspm splits Chart.js in two.
+After re-pinning, fetch the second file and point the first at it:
+
+```sh
+curl -sf https://ga.jspm.io/npm:chart.js@<version>/_/<chunk>.js -o vendor/javascript/chart-chunk.js
+sed -i '' 's#"\.\./_/<chunk>\.js"#"chart.js/chunk"#' vendor/javascript/chart.js.js
+```
+
+`bin/rails test test/importmap_test.rb` fails if a vendored file imports something that isn't pinned.
