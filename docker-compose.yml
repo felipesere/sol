@@ -1,0 +1,28 @@
+# Run your own copy of Sol:
+#   1. Pick a login mode below (names, or OIDC).
+#   2. docker compose up -d
+#   3. Open http://localhost:3000
+services:
+  sol:
+    build: .
+    ports:
+      - "3000:80"
+    volumes:
+      - sol-data:/data
+    environment:
+      TZ: Europe/London            # your timezone; times are shown in it
+
+      # Login mode A: pick-your-name. No accounts, no passwords. Only use on a network you trust.
+      HOUSEHOLD_USERS: "Felipe,Anna"
+
+      # Login mode B: OIDC (e.g. PocketID). Remove HOUSEHOLD_USERS above and fill these in.
+      # OIDC_ISSUER: https://id.example.com
+      # OIDC_CLIENT_ID: sol
+      # OIDC_CLIENT_SECRET: change-me
+      # APP_URL: https://sol.example.ts.net   # no trailing slash; callback is APP_URL/auth/oidc/callback
+
+      # ASSUME_SSL: "true"           # set when something in front terminates HTTPS (e.g. tailscale serve)
+    restart: unless-stopped
+
+volumes:
+  sol-data:

@@ -1,0 +1,24 @@
+<% record = event.record %>
+<%= link_to (event.kind == :dose ? edit_child_dose_path(child, record) : edit_child_temperature_path(child, record)),
+      class: "flex items-center gap-3 px-4 py-3", style: ("opacity: .72" if older) do %>
+  <span class="w-[64px] text-mute text-[14px] leading-tight">
+    <%= clock(event.at) %>
+    <% if (day = weekday_if_not_today(event.at)) %><span class="block text-[11px]"><%= day %></span><% end %>
+  </span>
+  <% if event.kind == :dose %>
+    <% style = medicine_style(child, record.medicine) %>
+    <span class="mark <%= style[:mark] %>" style="--c: var(<%= style[:color] %>)"></span>
+    <div class="flex-1 min-w-0">
+      <span class="font-semibold"><%= record.medicine.name %></span> <span class="text-mute"><%= number(record.amount) %> <%= record.medicine.dose_unit %></span>
+      <% if record.notes.present? %><p class="text-mute text-[13px] truncate"><%= record.notes %></p><% end %>
+    </div>
+  <% else %>
+    <% tone, label = temperature_state(record.celsius) %>
+    <span class="mark circle" style="--c: var(--c-temp)"></span>
+    <div class="flex-1 min-w-0">
+      <span class="font-semibold"><%= number_with_precision(record.celsius, precision: 1) %> °C</span> <span class="pill <%= tone %> ml-1"><%= label %></span>
+      <% if record.notes.present? %><p class="text-mute text-[13px] truncate"><%= record.notes %></p><% end %>
+    </div>
+  <% end %>
+  <span class="text-mute text-[13px]"><%= record.user.name %></span>
+<% end %>

@@ -1,0 +1,73 @@
+<% content_for :title, "#{@child.name} · Sol" %>
+
+<section class="card p-5 grid gap-4" aria-labelledby="child-name">
+  <h1 id="child-name" class="font-display text-[34px] leading-none font-bold"><%= @child.name %></h1>
+  <% if @latest %>
+    <div>
+      <p class="label">Last</p>
+      <p class="font-display font-bold leading-none mt-1"><span class="text-[64px]"><%= number_with_precision(@latest.celsius, precision: 1) %></span><span class="text-[26px] text-mute ml-1">°C</span></p>
+      <p class="text-mute text-[14px] mt-2"><%= ago(@latest.measured_at) %> · <%= clock(@latest.measured_at) %> · <%= @latest.user.name %></p>
+    </div>
+    <div class="border-t border-line pt-4">
+      <p class="label">Peak, last 24 h</p>
+      <% if @peak %>
+        <p class="font-display text-[22px] font-bold mt-0.5"><%= number_with_precision(@peak.celsius, precision: 1) %> °C <span class="text-mute text-[14px] font-sans font-medium">at <%= clock(@peak.measured_at) %></span></p>
+      <% else %>
+        <p class="text-mute mt-0.5">No readings in the last 24 h</p>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-mute">No temperature logged yet.</p>
+  <% end %>
+</section>
+
+<section class="grid gap-3" aria-labelledby="meds-h">
+  <div class="flex items-baseline justify-between">
+    <h2 id="meds-h" class="font-display text-[20px] font-bold">Medicine</h2>
+    <%= link_to "Manage", child_medicines_path(@child), class: "text-mute text-[13px] underline" %>
+  </div>
+  <% if @statuses.empty? %>
+    <div class="card p-4 grid gap-3">
+      <p class="text-mute">No medicines set up yet.</p>
+      <%= link_to "Add a medicine", new_child_medicine_path(@child), class: "btn btn-primary" %>
+    </div>
+  <% else %>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <%= render partial: "children/medicine_card", collection: @statuses, as: :status, locals: { child: @child } %>
+    </div>
+  <% end %>
+</section>
+
+<section class="card p-4 grid gap-3" aria-labelledby="chart-h">
+  <div class="flex items-center justify-between gap-3 flex-wrap">
+    <h2 id="chart-h" class="font-display text-[20px] font-bold">Temperature and doses</h2>
+    <div class="seg">
+      <%= link_to "24 h", child_path(@child, range: 24), "aria-current": (@range == 24).to_s %>
+      <%= link_to "48 h", child_path(@child, range: 48), "aria-current": (@range == 48).to_s %>
+    </div>
+  </div>
+  <div class="flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-mute">
+    <span class="inline-flex items-center gap-1.5"><span class="mark circle" style="--c: var(--c-temp)"></span>Temperature</span>
+    <% @child.medicines.active.order(:id).each do |medicine| %>
+      <% style = medicine_style(@child, medicine) %>
+      <span class="inline-flex items-center gap-1.5"><span class="mark <%= style[:mark] %>" style="--c: var(<%= style[:color] %>)"></span><%= medicine.name %></span>
+    <% end %>
+  </div>
+  <div class="relative h-[270px]" data-controller="chart" data-chart-data-value="<%= @chart.to_json %>">
+    <canvas data-chart-target="canvas" role="img" aria-label="Temperature readings with dose markers"></canvas>
+  </div>
+</section>
+
+<section class="grid gap-3" aria-labelledby="timeline-h">
+  <h2 id="timeline-h" class="font-display text-[20px] font-bold">Timeline</h2>
+  <%= render "children/timeline", timeline: @timeline, child: @child %>
+</section>
+
+<% content_for :bar do %>
+  <div class="bar">
+    <div class="mx-auto max-w-xl grid grid-cols-2 gap-3">
+      <%= link_to "Give dose", new_child_dose_path(@child), class: "btn btn-primary" %>
+      <%= link_to "Log temperature", new_child_temperature_path(@child), class: "btn btn-ghost" %>
+    </div>
+  </div>
+<% end %>

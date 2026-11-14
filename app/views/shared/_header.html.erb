@@ -1,0 +1,20 @@
+<header class="flex items-center justify-between gap-3">
+  <%= link_to root_path, class: "flex items-center gap-2.5" do %>
+    <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+      <circle cx="15" cy="15" r="6.5" fill="var(--sun)"/>
+      <g stroke="var(--sun)" stroke-width="2.2" stroke-linecap="round">
+        <path d="M15 2.5v3.2M15 24.3v3.2M2.5 15h3.2M24.3 15h3.2M6.2 6.2l2.3 2.3M21.5 21.5l2.3 2.3M6.2 23.8l2.3-2.3M21.5 8.5l2.3-2.3"/>
+      </g>
+    </svg>
+    <span class="font-display text-[22px] font-bold tracking-tight">Sol</span>
+  <% end %>
+  <div class="flex items-center gap-2">
+    <%# Full page load: Turbo Drive does not update attributes on <html>, so data-theme would stay stale. %>
+    <%= button_to current_theme.capitalize, theme_path, method: :patch, params: { theme: next_theme }, class: "btn btn-ghost btn-sm", form: { class: "contents", data: { turbo: false } }, "aria-label": "Change theme" %>
+    <% if current_user %>
+      <%= button_to session_path, method: :delete, class: "btn btn-ghost btn-sm", form: { class: "contents" }, title: "Switch person" do %>
+        <span class="mark circle" style="--c: var(--accent)"></span><%= current_user.name %>
+      <% end %>
+    <% end %>
+  </div>
+</header>

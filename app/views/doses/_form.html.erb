@@ -1,0 +1,45 @@
+<% status = @medicine&.status %>
+<%= form_with model: [@child, dose], class: "grid gap-4" do |f| %>
+  <%= render "shared/form_errors", record: dose %>
+
+  <% if dose.new_record? %>
+    <fieldset class="grid gap-2">
+      <legend class="label mb-2">Medicine</legend>
+      <% @child.medicines.active.order(:id).each do |medicine| %>
+        <% tone, label = dose_state_pill(medicine.status) %>
+        <% st = medicine.status %>
+        <% style = medicine_style(@child, medicine) %>
+        <%= link_to new_child_dose_path(@child, medicine_id: medicine.id), class: "chip", "aria-current": (medicine == @medicine).to_s do %>
+          <span class="flex items-center gap-2 font-semibold"><span class="mark <%= style[:mark] %>" style="--c: var(<%= style[:color] %>)"></span><%= medicine.name %></span>
+          <span class="pill <%= tone %>"><%= st.ok? ? "Ready now" : "#{label} until #{clock(st.next_allowed_at)}" %></span>
+        <% end %>
+      <% end %>
+    </fieldset>
+    <%= f.hidden_field :medicine_id %>
+  <% else %>
+    <p class="font-semibold"><%= dose.medicine.name %></p>
+  <% end %>
+
+  <div class="grid grid-cols-2 gap-3">
+    <label class="grid gap-1.5"><span class="label">Amount (<%= @medicine&.dose_unit %>)</span>
+      <%= f.number_field :amount, step: 0.5, min: 0, inputmode: "decimal", class: "field", required: true %>
+    </label>
+    <label class="grid gap-1.5"><span class="label">Given at</span>
+      <%= f.datetime_field :given_at, value: local_input_value(dose.given_at || Time.current), class: "field", required: true %>
+    </label>
+  </div>
+
+  <% if dose.new_record? && status && !status.ok? %>
+    <p class="flash">
+      <%= @medicine.name %> was given <%= ago(status.last_dose.given_at) %>.
+      <% if status.state == :limit %>It has reached <%= @medicine.max_doses_per_24h %> doses in 24 hours.<% end %>
+      The next dose is allowed at <%= clock(status.next_allowed_at) %>. Record it only if it was already given.
+    </p>
+  <% end %>
+
+  <label class="grid gap-1.5"><span class="label">Note (optional)</span>
+    <%= f.text_area :notes, class: "field", placeholder: "Took it with yoghurt" %>
+  </label>
+
+  <%= f.submit (dose.new_record? ? (status&.ok? == false ? "Record anyway" : "Give dose") : "Save"), class: "btn btn-primary" %>
+<% end %>

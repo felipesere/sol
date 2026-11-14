@@ -1,12 +1,11 @@
-<div class="mx-auto max-w-sm grid gap-4 pt-10">
-  <h1 class="text-3xl font-bold">Who is this?</h1>
-  <% if alert %><p class="text-red-600"><%= alert %></p><% end %>
-
+<% content_for :title, "Sol" %>
+<div class="grid gap-4 pt-6">
+  <h1 class="font-display text-[30px] font-bold">Who is this?</h1>
   <% if auth_config.household? %>
     <% auth_config.household_names.each do |name| %>
-      <%= button_to name, session_path, params: { name: name }, class: "w-full rounded-xl border px-4 py-4 text-lg font-semibold" %>
+      <%= button_to name, session_path, params: { name: name }, class: "btn btn-ghost", form: { class: "contents" }, style: "min-height: 56px; font-size: 18px" %>
     <% end %>
   <% else %>
-    <%= button_to "Sign in", "/auth/oidc", data: { turbo: false }, class: "w-full rounded-xl border px-4 py-4 text-lg font-semibold" %>
+    <%= button_to "Sign in", "/auth/oidc", data: { turbo: false }, class: "btn btn-primary", form: { class: "contents" }, style: "min-height: 56px; font-size: 18px" %>
   <% end %>
 </div>

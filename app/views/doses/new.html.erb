@@ -1,0 +1,8 @@
+<% content_for :title, "Give dose · Sol" %>
+<div class="flex items-center justify-between"><h1 class="font-display text-[26px] font-bold">Give dose</h1><%= link_to "Cancel", child_path(@child), class: "btn btn-ghost btn-sm" %></div>
+<% if @medicine %>
+  <%= render "form", dose: @dose %>
+<% else %>
+  <p class="card p-4 text-mute">There are no medicines for <%= @child.name %> yet.</p>
+  <%= link_to "Add a medicine", new_child_medicine_path(@child), class: "btn btn-primary" %>
+<% end %>

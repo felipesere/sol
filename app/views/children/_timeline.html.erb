@@ -1,0 +1,13 @@
+<% if timeline.events.empty? %>
+  <p class="card p-4 text-mute">Nothing logged in the last 48 hours.</p>
+<% else %>
+  <div class="card divide-y divide-line overflow-hidden">
+    <% [["Last 24 hours", timeline.recent, false], ["24 to 48 hours ago", timeline.earlier, true]].each do |title, events, older| %>
+      <% next if events.empty? %>
+      <div class="px-4 py-2.5 label" style="background: var(--surface2)<%= "; border-top: 4px solid var(--accent)" if older %>"><%= title %></div>
+      <% events.each do |event| %>
+        <%= render "children/timeline_row", event: event, child: child, older: older %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

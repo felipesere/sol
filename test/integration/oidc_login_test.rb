@@ -25,8 +25,9 @@ class OidcLoginTest < ActionDispatch::IntegrationTest
       post "/auth/oidc"
       follow_redirect!
       follow_redirect!
+      follow_redirect!
     end
-    assert_select "p", text: /Anna Smith/
+    assert_select "header button", text: /Anna Smith/
   end
 
   test "a failed OIDC callback returns to the login page" do

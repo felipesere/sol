@@ -22,6 +22,7 @@ RUN apt-get update -qq && \
 
 # Set production environment variables and enable jemalloc for reduced memory usage and latency.
 ENV RAILS_ENV="production" \
+    DATA_DIR="/data" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development" \
@@ -63,6 +64,7 @@ FROM base
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash
+RUN mkdir /data && chown rails:rails /data
 USER 1000:1000
 
 # Copy built artifacts: gems, application
@@ -73,5 +75,6 @@ COPY --chown=rails:rails --from=build /rails /rails
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
+VOLUME /data
 EXPOSE 80
 CMD ["./bin/thrust", "./bin/rails", "server"]

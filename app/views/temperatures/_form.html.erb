@@ -1,0 +1,15 @@
+<%= form_with model: [@child, temperature], class: "grid gap-4" do |f| %>
+  <%= render "shared/form_errors", record: temperature %>
+  <div class="grid grid-cols-2 gap-3">
+    <label class="grid gap-1.5"><span class="label">Temperature (°C)</span>
+      <%= f.number_field :celsius, step: 0.1, min: 34, max: 43, inputmode: "decimal", placeholder: "38.2", class: "field text-[22px] font-semibold", required: true, autofocus: temperature.new_record? %>
+    </label>
+    <label class="grid gap-1.5"><span class="label">Measured at</span>
+      <%= f.datetime_field :measured_at, value: local_input_value(temperature.measured_at || Time.current), class: "field", required: true %>
+    </label>
+  </div>
+  <label class="grid gap-1.5"><span class="label">Note (optional)</span>
+    <%= f.text_area :notes, class: "field", placeholder: "Ear thermometer, after a nap" %>
+  </label>
+  <%= f.submit (temperature.new_record? ? "Save temperature" : "Save"), class: "btn btn-primary" %>
+<% end %>

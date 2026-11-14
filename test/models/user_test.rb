@@ -34,8 +34,8 @@ class UserTest < ActiveSupport::TestCase
 
   test "household finds or creates by name" do
     assert_difference "User.count", 1 do
-      User.household("Felipe")
-      User.household("Felipe")
+      User.household("Grandma")
+      User.household("Grandma")
     end
   end
 end

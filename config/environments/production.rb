@@ -1,6 +1,14 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  # SECRET_KEY_BASE wins; otherwise one is generated on first boot and kept in the data directory.
+  unless ENV["SECRET_KEY_BASE"].present? || ENV["SECRET_KEY_BASE_DUMMY"].present?
+    key_file = Pathname.new(ENV.fetch("DATA_DIR", Rails.root.join("storage"))).join("secret_key_base")
+    key_file.dirname.mkpath
+    key_file.write(SecureRandom.hex(64)) unless key_file.exist?
+    config.secret_key_base = key_file.read.strip
+  end
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
@@ -22,13 +30,14 @@ Rails.application.configure do
   # config.asset_host = "http://assets.example.com"
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  config.assume_ssl = true
+  # Set ASSUME_SSL=true when a proxy such as `tailscale serve` terminates HTTPS in front of the app.
+  config.assume_ssl = ENV["ASSUME_SSL"] == "true"
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = ENV["FORCE_SSL"] == "true"
 
   # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]

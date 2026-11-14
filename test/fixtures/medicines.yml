@@ -1,0 +1,23 @@
+paracetamol:
+  child: mira
+  name: Paracetamol
+  dose_amount: 5
+  dose_unit: ml
+  min_interval_minutes: 240
+  max_doses_per_24h: 4
+
+ibuprofen:
+  child: mira
+  name: Ibuprofen
+  dose_amount: 4
+  dose_unit: ml
+  min_interval_minutes: 360
+  max_doses_per_24h: 3
+
+theos_paracetamol:
+  child: theo
+  name: Paracetamol
+  dose_amount: 3
+  dose_unit: ml
+  min_interval_minutes: 240
+  max_doses_per_24h: 4

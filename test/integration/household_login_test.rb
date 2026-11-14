@@ -19,7 +19,10 @@ class HouseholdLoginTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
 
     follow_redirect!
-    assert_select "p", text: /Anna/
+    assert_redirected_to child_path(Child.order(:id).first)
+
+    follow_redirect!
+    assert_select "header button", text: /Anna/
     assert cookies[:user_id].present?
   end
 

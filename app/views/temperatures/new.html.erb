@@ -1,0 +1,3 @@
+<% content_for :title, "Log temperature · Sol" %>
+<div class="flex items-center justify-between"><h1 class="font-display text-[26px] font-bold">Log temperature</h1><%= link_to "Cancel", child_path(@child), class: "btn btn-ghost btn-sm" %></div>
+<%= render "form", temperature: @temperature %>

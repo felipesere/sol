@@ -1,0 +1,5 @@
+<% content_for :title, "Edit temperature · Sol" %>
+<div class="flex items-center justify-between"><h1 class="font-display text-[26px] font-bold">Edit temperature</h1><%= link_to "Cancel", child_path(@child), class: "btn btn-ghost btn-sm" %></div>
+<p class="text-mute -mt-3">Logged by <%= @temperature.user.name %></p>
+<%= render "form", temperature: @temperature %>
+<%= button_to "Delete this reading", child_temperature_path(@child, @temperature), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Delete this reading?" } } %>

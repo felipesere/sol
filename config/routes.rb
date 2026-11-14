@@ -7,5 +7,13 @@ Rails.application.routes.draw do
   match "auth/:provider/callback" => "sessions#omniauth", via: %i[get post]
   get "auth/failure" => "sessions#failure"
 
-  root "dashboard#show"
+  patch "theme" => "themes#update", as: :theme
+
+  resources :children, except: :destroy do
+    resources :doses, except: %i[index show]
+    resources :temperatures, except: %i[index show]
+    resources :medicines, except: %i[show destroy]
+  end
+
+  root "children#index"
 end

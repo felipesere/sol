@@ -1,0 +1,17 @@
+<% content_for :title, "Medicines · Sol" %>
+<div class="flex items-center justify-between"><h1 class="font-display text-[26px] font-bold">Medicines for <%= @child.name %></h1><%= link_to "Back", child_path(@child), class: "btn btn-ghost btn-sm" %></div>
+<p class="text-mute -mt-3 text-[13px]">Doses and limits are whatever you enter here. Check them with your doctor or pharmacist.</p>
+<div class="card divide-y divide-line overflow-hidden">
+  <% @medicines.each do |medicine| %>
+    <%= link_to edit_child_medicine_path(@child, medicine), class: "flex items-center justify-between gap-3 px-4 py-3" do %>
+      <div>
+        <p class="font-semibold"><%= medicine.name %><% unless medicine.active? %> <span class="pill neutral ml-1">Archived</span><% end %></p>
+        <p class="text-mute text-[13px]"><%= number(medicine.dose_amount) %> <%= medicine.dose_unit %> · every <%= duration(medicine.min_interval_minutes) %> · max <%= medicine.max_doses_per_24h %> per 24 h</p>
+      </div>
+      <span class="text-mute">Edit</span>
+    <% end %>
+  <% end %>
+  <% if @medicines.empty? %><p class="px-4 py-3 text-mute">No medicines yet.</p><% end %>
+</div>
+<%= link_to "Add a medicine", new_child_medicine_path(@child), class: "btn btn-primary" %>
+<%= link_to "Edit #{@child.name}", edit_child_path(@child), class: "btn btn-ghost" %>
