@@ -10,7 +10,7 @@ services:
     volumes:
       - sol-data:/data
     environment:
-      TZ: Europe/London            # your timezone; times are shown in it
+      TZ: Europe/London            # fallback only; browsers report their own timezone
 
       # Login mode A: pick-your-name. No accounts, no passwords. Only use on a network you trust.
       HOUSEHOLD_USERS: "Felipe,Anna"

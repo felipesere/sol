@@ -20,7 +20,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body data-controller="timezone">
     <div class="mx-auto w-full max-w-xl grid gap-5">
       <%= render "shared/header" %>
       <% if notice %><p class="flash" style="background: var(--good-bg); color: var(--good)"><%= notice %></p><% end %>

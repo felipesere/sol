@@ -18,7 +18,7 @@ Edit `docker-compose.yml` first. Everything is configured with environment varia
 | --- | --- |
 | `HOUSEHOLD_USERS` | Comma separated names, e.g. `Felipe,Anna`. People pick their name; there are no passwords. Use only on a network you trust (a tailnet, your home LAN). |
 | `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, `APP_URL` | Log in with an OIDC provider such as PocketID. Used when `HOUSEHOLD_USERS` is not set. |
-| `TZ` | Timezone for displayed times, e.g. `Europe/London`. Defaults to UTC. |
+| `TZ` | Fallback timezone, e.g. `Europe/London`. Each browser reports its own timezone, and times are entered and shown on that clock, so this only applies before the first page load finishes or if cookies are blocked. Defaults to UTC. |
 | `ASSUME_SSL` / `FORCE_SSL` | Set to `true` when HTTPS is terminated in front of the app (e.g. `tailscale serve`). |
 | `SECRET_KEY_BASE` | Optional. Generated on first boot and stored in the data volume if unset. |
 | `DATA_DIR` | Where the SQLite databases live. Defaults to `/data` in the image. Mount it as a volume. |
