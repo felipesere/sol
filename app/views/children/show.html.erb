@@ -8,17 +8,29 @@
       <p class="font-display font-bold leading-none mt-1"><span class="text-[64px]"><%= number_with_precision(@latest.celsius, precision: 1) %></span><span class="text-[26px] text-mute ml-1">°C</span></p>
       <p class="text-mute text-[14px] mt-2"><%= ago(@latest.measured_at) %> · <%= clock(@latest.measured_at) %> · <%= @latest.user.first_name %></p>
     </div>
-    <div class="border-t border-line pt-4">
-      <p class="label">Peak, last 24 h</p>
-      <% if @peak %>
-        <p class="font-display text-[22px] font-bold mt-0.5"><%= number_with_precision(@peak.celsius, precision: 1) %> °C <span class="text-mute text-[14px] font-sans font-medium">at <%= clock(@peak.measured_at) %></span></p>
-      <% else %>
-        <p class="text-mute mt-0.5">No readings in the last 24 h</p>
-      <% end %>
-    </div>
   <% else %>
     <p class="text-mute">No temperature logged yet.</p>
   <% end %>
+  <div class="grid grid-cols-2 border-t border-line pt-4">
+    <div class="pr-4 min-w-0">
+      <p class="label">Peak, last 24 h</p>
+      <% if @peak %>
+        <p class="font-display text-[22px] font-bold mt-0.5"><%= number_with_precision(@peak.celsius, precision: 1) %> °C</p>
+        <p class="text-mute text-[14px]">at <%= clock(@peak.measured_at) %></p>
+      <% else %>
+        <p class="text-mute mt-0.5">No readings</p>
+      <% end %>
+    </div>
+    <div class="pl-4 border-l border-line min-w-0">
+      <p class="label">Last medicine</p>
+      <% if @last_dose %>
+        <p class="font-display text-[22px] font-bold mt-0.5 leading-tight"><%= @last_dose.medicine.name %></p>
+        <p class="text-mute text-[14px]"><%= ago(@last_dose.given_at) %></p>
+      <% else %>
+        <p class="text-mute mt-0.5">None given</p>
+      <% end %>
+    </div>
+  </div>
 </section>
 
 <section class="grid gap-3" aria-labelledby="meds-h">

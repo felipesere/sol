@@ -42,6 +42,30 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_select "section", text: /Peak, last 24 h\s+39\.2/
   end
 
+  test "the child tile shows the last medicine given and how long ago" do
+    give(500, medicine: medicines(:ibuprofen)); give(95)
+
+    get child_path(@mira)
+
+    assert_select "section", text: /Last medicine\s+Paracetamol\s+1h 35m ago/
+  end
+
+  test "the last medicine is the most recent dose even when older than 24 hours" do
+    give(2000)
+
+    get child_path(@mira)
+
+    assert_select "section", text: /Last medicine\s+Paracetamol\s+33h 20m ago/
+  end
+
+  test "the child tile copes with no doses and no readings" do
+    get child_path(@mira)
+
+    assert_select "section", text: /No temperature logged yet/
+    assert_select "section", text: /Last medicine\s+None given/
+    assert_select "section", text: /Peak, last 24 h\s+No readings/
+  end
+
   test "a medicine ready to give offers a primary action" do
     get child_path(@mira)
 

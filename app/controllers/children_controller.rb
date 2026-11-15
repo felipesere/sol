@@ -11,6 +11,7 @@ class ChildrenController < ApplicationController
     @statuses = @child.medicines.active.order(:id).map(&:status)
     @latest = @child.temperatures.newest_first.first
     @peak = @child.temperatures.where(measured_at: 24.hours.ago..).order(celsius: :desc, measured_at: :desc).first
+    @last_dose = @child.doses.includes(:medicine).newest_first.first
     @timeline = Timeline.new(@child)
     @chart = ChartData.new(@child, hours: @range)
   end
