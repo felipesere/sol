@@ -22,9 +22,9 @@ class ChartData
   def as_json(*)
     {
       hours: @hours,
-      temperatures: temperatures.map { |t| { x: minutes(t.measured_at), y: t.celsius.to_f, at: t.measured_at.iso8601, by: t.user.name } },
+      temperatures: temperatures.map { |t| { x: minutes(t.measured_at), y: t.celsius.to_f, at: t.measured_at.iso8601, by: t.user.first_name } },
       doses: doses.map do |d|
-        { x: minutes(d.given_at), medicine: d.medicine_id, at: d.given_at.iso8601, by: d.user.name, amount: d.amount.to_f, unit: d.medicine.dose_unit }
+        { x: minutes(d.given_at), medicine: d.medicine_id, at: d.given_at.iso8601, by: d.user.first_name, amount: d.amount.to_f, unit: d.medicine.dose_unit }
       end,
       medicines: @child.medicines.order(:id).map do |m|
         style = self.class.style_for(@child, m)

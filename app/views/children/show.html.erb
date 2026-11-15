@@ -6,7 +6,7 @@
     <div>
       <p class="label">Last</p>
       <p class="font-display font-bold leading-none mt-1"><span class="text-[64px]"><%= number_with_precision(@latest.celsius, precision: 1) %></span><span class="text-[26px] text-mute ml-1">°C</span></p>
-      <p class="text-mute text-[14px] mt-2"><%= ago(@latest.measured_at) %> · <%= clock(@latest.measured_at) %> · <%= @latest.user.name %></p>
+      <p class="text-mute text-[14px] mt-2"><%= ago(@latest.measured_at) %> · <%= clock(@latest.measured_at) %> · <%= @latest.user.first_name %></p>
     </div>
     <div class="border-t border-line pt-4">
       <p class="label">Peak, last 24 h</p>

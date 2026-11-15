@@ -7,7 +7,7 @@ class ChildrenController < ApplicationController
   end
 
   def show
-    @range = params[:range] == "24" ? 24 : 48
+    @range = params[:range] == "48" ? 48 : 24
     @statuses = @child.medicines.active.order(:id).map(&:status)
     @latest = @child.temperatures.newest_first.first
     @peak = @child.temperatures.where(measured_at: 24.hours.ago..).order(celsius: :desc, measured_at: :desc).first

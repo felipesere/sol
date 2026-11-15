@@ -27,7 +27,9 @@ class OidcLoginTest < ActionDispatch::IntegrationTest
       follow_redirect!
       follow_redirect!
     end
-    assert_select "header button", text: /Anna Smith/
+    assert_select "header button", text: /Anna/
+    assert_select "header button", text: /Smith/, count: 0
+    assert_equal "Anna Smith", User.find_by!(sub: "sub-1").name # stored in full, shown by first name
   end
 
   test "a failed OIDC callback returns to the login page" do

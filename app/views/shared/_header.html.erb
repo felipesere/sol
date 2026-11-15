@@ -13,7 +13,7 @@
     <%= button_to current_theme.capitalize, theme_path, method: :patch, params: { theme: next_theme }, class: "btn btn-ghost btn-sm", form: { class: "contents", data: { turbo: false } }, "aria-label": "Change theme" %>
     <% if current_user %>
       <%= button_to session_path, method: :delete, class: "btn btn-ghost btn-sm", form: { class: "contents" }, title: "Switch person" do %>
-        <span class="mark circle" style="--c: var(--accent)"></span><%= current_user.name %>
+        <span class="mark circle" style="--c: var(--accent)"></span><%= current_user.first_name %>
       <% end %>
     <% end %>
   </div>

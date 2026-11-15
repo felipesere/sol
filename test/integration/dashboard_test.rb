@@ -81,12 +81,28 @@ class DashboardTest < ActionDispatch::IntegrationTest
     assert_select "a[href*='/doses/'][href$='/edit']", count: 2 # the 3000 minute old dose is outside 48 hours
   end
 
-  test "range links switch the chart window" do
-    get child_path(@mira, range: 24)
+  test "the chart defaults to 24 hours and the range links switch it" do
+    get child_path(@mira)
     assert_select "[data-chart-data-value*='\"hours\":24']"
+    assert_select ".seg a[aria-current=true]", text: "24 h"
+
+    get child_path(@mira, range: 48)
+    assert_select "[data-chart-data-value*='\"hours\":48']"
+    assert_select ".seg a[aria-current=true]", text: "48 h"
+  end
+
+  test "people are shown by first name everywhere" do
+    smith = User.create!(name: "Anna Smith")
+    take(37.6, 60, by: smith)
+    give(30, by: smith)
 
     get child_path(@mira)
-    assert_select "[data-chart-data-value*='\"hours\":48']"
+
+    assert_select "a, p, span", text: /Smith/, count: 0
+    assert_select "section", text: /Anna/
+    assert_select "article", text: /by Anna/
+    assert_select "a[href$='/edit']", text: /Anna/
+    assert_select "[data-chart-data-value*='Smith']", count: 0
   end
 
   test "requires login" do

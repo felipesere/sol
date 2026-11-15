@@ -32,6 +32,15 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "anna@home", User.from_oidc(oidc(name: nil)).name
   end
 
+  test "first_name is the part before the first space" do
+    assert_equal "Anna", User.new(name: "Anna Smith").first_name
+    assert_equal "Anna", User.new(name: "Anna Maria Smith").first_name
+  end
+
+  test "first_name of a single word is the word itself" do
+    assert_equal "Felipe", User.new(name: "Felipe").first_name
+  end
+
   test "household finds or creates by name" do
     assert_difference "User.count", 1 do
       User.household("Grandma")

@@ -1,6 +1,11 @@
 class User < ApplicationRecord
   validates :name, presence: true
 
+  # What the app shows for a person: "Anna Smith" becomes "Anna".
+  def first_name
+    name.split(" ", 2).first
+  end
+
   def self.from_oidc(auth)
     user = find_or_initialize_by(sub: auth.uid)
     user.name = auth.info.name.presence || auth.info.nickname.presence || auth.info.email.presence || "Unknown"

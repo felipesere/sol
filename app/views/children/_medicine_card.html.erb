@@ -18,10 +18,10 @@
     <p class="text-[13px] text-mute"><span class="text-ink font-semibold"><%= status.count %> of <%= medicine.max_doses_per_24h %></span> doses in the last 24 h</p>
   </div>
   <% if status.ok? %>
-    <p class="text-[14px]"><%= status.last_dose ? "Last dose #{ago(status.last_dose.given_at)} by #{status.last_dose.user.name}" : "No doses in the last 24 h" %></p>
+    <p class="text-[14px]"><%= status.last_dose ? "Last dose #{ago(status.last_dose.given_at)} by #{status.last_dose.user.first_name}" : "No doses in the last 24 h" %></p>
   <% else %>
     <p class="text-[14px]">Next dose at <strong><%= clock(status.next_allowed_at) %></strong> (in <%= duration((status.next_allowed_at - Time.current) / 60) %>)</p>
-    <p class="text-mute text-[13px] -mt-2">Last dose <%= ago(status.last_dose.given_at) %> by <%= status.last_dose.user.name %></p>
+    <p class="text-mute text-[13px] -mt-2">Last dose <%= ago(status.last_dose.given_at) %> by <%= status.last_dose.user.first_name %></p>
   <% end %>
   <%= link_to (status.ok? ? "Give #{number(medicine.dose_amount)} #{medicine.dose_unit}" : "Give anyway"),
         new_child_dose_path(child, medicine_id: medicine.id),
