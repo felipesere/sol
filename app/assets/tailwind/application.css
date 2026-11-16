@@ -35,6 +35,9 @@
   --c-para: #0B7F73;
   --c-ibu: #7B45C9;
   --c-other: #B5560F;
+  --c-4: #C2307A;
+  --c-5: #5F7A0A;
+  --c-6: #1B7AB8;
   --fever-band: rgba(179, 50, 31, 0.07);
   --shadow: 0 1px 2px rgba(15, 27, 39, 0.06), 0 6px 18px rgba(15, 27, 39, 0.05);
 }
@@ -47,7 +50,7 @@
     --good: #5FD39B;  --good-bg: #123325;
     --warn: #F0B556;  --warn-bg: #3A2A0C;
     --crit: #FF8B7B;  --crit-bg: #3F1A15;
-    --c-temp: #7FA8FF; --c-para: #3DCBB9; --c-ibu: #B592F5; --c-other: #F0A267;
+    --c-temp: #7FA8FF; --c-para: #3DCBB9; --c-ibu: #B592F5; --c-other: #F0A267; --c-4: #F58AC0; --c-5: #B9D45A; --c-6: #6CC3F2;
     --fever-band: rgba(255, 139, 123, 0.09);
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   }
@@ -60,7 +63,7 @@
   --good: #5FD39B;  --good-bg: #123325;
   --warn: #F0B556;  --warn-bg: #3A2A0C;
   --crit: #FF8B7B;  --crit-bg: #3F1A15;
-  --c-temp: #7FA8FF; --c-para: #3DCBB9; --c-ibu: #B592F5; --c-other: #F0A267;
+  --c-temp: #7FA8FF; --c-para: #3DCBB9; --c-ibu: #B592F5; --c-other: #F0A267; --c-4: #F58AC0; --c-5: #B9D45A; --c-6: #6CC3F2;
   --fever-band: rgba(255, 139, 123, 0.09);
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
@@ -107,6 +110,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .mark { display: inline-block; width: 12px; height: 12px; flex: none; background: var(--c); }
 .mark.circle { border-radius: 50%; }
 .mark.diamond { transform: rotate(45deg) scale(0.78); border-radius: 2px; }
+.mark.square { transform: scale(0.8); border-radius: 2px; }
+.mark.star { clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); transform: scale(1.15); }
+.mark.plus { clip-path: polygon(35% 0, 65% 0, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0 65%, 0 35%, 35% 35%); transform: scale(1.1); }
 .mark.tri { background: transparent; width: 0; height: 0; border-left: 6.5px solid transparent; border-right: 6.5px solid transparent; border-bottom: 12px solid var(--c); }
 
 .bar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); z-index: 5; }

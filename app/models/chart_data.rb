@@ -5,7 +5,10 @@ class ChartData
   STYLES = [
     { color: "--c-para", mark: "diamond", shape: "rectRot" },
     { color: "--c-ibu", mark: "tri", shape: "triangle" },
-    { color: "--c-other", mark: "circle", shape: "circle" }
+    { color: "--c-other", mark: "circle", shape: "circle" },
+    { color: "--c-4", mark: "square", shape: "rect" },
+    { color: "--c-5", mark: "star", shape: "star" },
+    { color: "--c-6", mark: "plus", shape: "cross" }
   ].freeze
 
   def self.style_for(child, medicine)
