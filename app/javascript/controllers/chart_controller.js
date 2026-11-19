@@ -35,6 +35,26 @@ const feverPlugin = {
   }
 }
 
+// Draws a full-height line through every dose so its effect on the temperature is easy to see.
+const doseLinesPlugin = {
+  id: "doseLines",
+  beforeDatasetsDraw(chart) {
+    const { chartArea: area, scales: { x }, ctx } = chart
+    ctx.save()
+    ctx.lineWidth = 1.5
+    ctx.globalAlpha = 0.45
+    chart.data.datasets.filter((set) => set.doseLines).forEach((set) => {
+      ctx.strokeStyle = set.backgroundColor
+      set.data.forEach((dose) => {
+        const px = x.getPixelForValue(dose.x)
+        if (px < area.left || px > area.right) return
+        ctx.beginPath(); ctx.moveTo(px, area.top); ctx.lineTo(px, area.bottom); ctx.stroke()
+      })
+    })
+    ctx.restore()
+  }
+}
+
 export default class extends Controller {
   static targets = ["canvas"]
   static values = { data: Object }
@@ -57,7 +77,10 @@ export default class extends Controller {
     const now = Date.now()
     const minX = -hours * 60
     const muted = cssVar("--muted"), line = cssVar("--line"), surface = cssVar("--surface")
-    const laneFor = (index) => 35.75 - index * 0.4
+    const LANE_STEP = 0.35
+    const laneFor = (index) => 35.75 - index * LANE_STEP
+    // Grow the axis downwards so every medicine lane stays inside the plot area.
+    const yMin = Math.min(35, laneFor(Math.max(medicines.length, 1) - 1) - LANE_STEP * 0.75)
 
     const temps = temperatures.map((t) => ({ x: t.x, y: t.y, at: new Date(t.at), by: t.by, kind: "temperature" }))
     const datasets = [{
@@ -69,7 +92,7 @@ export default class extends Controller {
 
     medicines.forEach((medicine, index) => {
       datasets.push({
-        label: medicine.name, order: 2, showLine: false, pointStyle: medicine.shape, radius: 7, hoverRadius: 9, hitRadius: 16,
+        label: medicine.name, order: 2, doseLines: true, showLine: false, pointStyle: medicine.shape, radius: 7, hoverRadius: 9, hitRadius: 16,
         backgroundColor: cssVar(medicine.color), borderColor: surface, borderWidth: 1.5,
         data: doses.filter((d) => d.medicine === medicine.id).map((d) => ({
           x: d.x, y: laneFor(index), at: new Date(d.at), by: d.by, amount: d.amount, unit: d.unit, kind: "dose"
@@ -80,7 +103,7 @@ export default class extends Controller {
     this.chart = new Chart(this.canvasTarget, {
       type: "line",
       data: { datasets },
-      plugins: [feverPlugin],
+      plugins: [feverPlugin, doseLinesPlugin],
       options: {
         responsive: true, maintainAspectRatio: false, animation: false,
         interaction: { mode: "nearest", intersect: true },
@@ -122,7 +145,7 @@ export default class extends Controller {
             }
           },
           y: {
-            min: 35, max: 40, grid: { color: line, drawTicks: false }, border: { display: false },
+            min: yMin, max: 40, grid: { color: line, drawTicks: false }, border: { display: false },
             ticks: { color: muted, stepSize: 1, padding: 6, font: { size: 11 }, callback: (v) => (v >= 36 ? `${v.toFixed(0)}°` : "") },
             afterBuildTicks: (axis) => { axis.ticks = [36, 37, 38, 39, 40].map((value) => ({ value })) }
           }
