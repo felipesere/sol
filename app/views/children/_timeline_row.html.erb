@@ -9,7 +9,7 @@
     <% style = medicine_style(child, record.medicine) %>
     <span class="mark <%= style[:mark] %>" style="--c: var(<%= style[:color] %>)"></span>
     <div class="flex-1 min-w-0">
-      <span class="font-semibold"><%= record.medicine.name %></span> <span class="text-mute"><%= number(record.amount) %> <%= record.medicine.dose_unit %></span>
+      <span class="font-semibold"><%= record.medicine.name %></span> <span class="text-mute"><%= dose_text(record.amount, record.medicine.dose_unit) %></span>
       <% if record.notes.present? %><p class="text-mute text-[13px] truncate"><%= record.notes %></p><% end %>
     </div>
   <% else %>

@@ -34,8 +34,37 @@ module ApplicationHelper
     case status.state
     when :ok then ["good", "Ready"]
     when :wait then ["warn", "Wait"]
-    when :limit then ["crit", "Limit reached"]
+    when :limit then status.medicine.scheduled? ? ["good", "Done today"] : ["crit", "Limit reached"]
+    when :finished then ["neutral", "Course finished"]
     end
+  end
+
+  # "5 ml", or "2×" for medicines counted in repetitions (a spray).
+  def dose_text(amount, unit)
+    unit == "count" ? "#{number(amount)}×" : "#{number(amount)} #{unit}"
+  end
+
+  # "5 ml · every 4h · max 4 per 24 h" / "5 ml · 3 times a day · day 4 of 10"
+  def medicine_summary(medicine)
+    parts = [dose_text(medicine.dose_amount, medicine.dose_unit)]
+    if medicine.scheduled?
+      parts << "#{medicine.doses_per_day} #{"time".pluralize(medicine.doses_per_day)} a day"
+      parts << "at least #{duration(medicine.min_interval_minutes)} apart" if medicine.min_interval_minutes.positive?
+      parts << "day #{[medicine.course_day, medicine.course_days].min} of #{medicine.course_days}" if medicine.course_days
+    else
+      parts << "every #{duration(medicine.min_interval_minutes)}"
+      parts << "max #{medicine.max_doses_per_24h} per 24 h"
+    end
+    parts.join(" · ")
+  end
+
+  def dose_count_label(status)
+    medicine = status.medicine
+    "#{status.count} of #{medicine.target}"
+  end
+
+  def dose_window_label(medicine)
+    medicine.scheduled? ? "doses today" : "doses in the last 24 h"
   end
 
   def medicine_style(child, medicine)

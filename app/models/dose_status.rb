@@ -2,7 +2,11 @@
 #
 #   :ok     can be given now
 #   :wait   under the minimum interval since the last dose
-#   :limit  the maximum number of doses in 24h has been reached
+#   :limit  the maximum number of doses in 24h (or the daily target of a
+#           scheduled medicine) has been reached
+#   :finished  the course of a scheduled medicine has run its days
+#
+# As-needed medicines look at a rolling 24 hours, scheduled ones at today.
 class DoseStatus
   WINDOW = 24.hours
 
@@ -14,7 +18,7 @@ class DoseStatus
   end
 
   def doses_in_window
-    @doses_in_window ||= medicine.doses.where("given_at > ? AND given_at <= ?", now - WINDOW, now).order(:given_at).to_a
+    @doses_in_window ||= medicine.doses.where("given_at > ? AND given_at <= ?", window_start, now).order(:given_at).to_a
   end
 
   def count
@@ -22,15 +26,16 @@ class DoseStatus
   end
 
   def remaining
-    [medicine.max_doses_per_24h - count, 0].max
+    [medicine.target - count, 0].max
   end
 
   def last_dose
-    doses_in_window.last
+    @last_dose ||= medicine.scheduled? ? medicine.doses.where("given_at <= ?", now).order(:given_at).last : doses_in_window.last
   end
 
   def state
-    if count >= medicine.max_doses_per_24h then :limit
+    if medicine.course_over?(now.to_date) then :finished
+    elsif count >= medicine.target then :limit
     elsif now < interval_ends_at then :wait
     else :ok
     end
@@ -41,7 +46,7 @@ class DoseStatus
   # The earliest moment the next dose is allowed.
   def next_allowed_at
     case state
-    when :ok then now
+    when :ok, :finished then now
     when :wait then interval_ends_at
     when :limit then [interval_ends_at, slot_frees_at].max
     end
@@ -49,12 +54,20 @@ class DoseStatus
 
   private
 
+  # The query is exclusive, so scheduled windows start a second before midnight
+  # to count a dose given exactly at 00:00.
+  def window_start
+    medicine.scheduled? ? now.beginning_of_day - 1 : now - WINDOW
+  end
+
   def interval_ends_at
     last_dose ? last_dose.given_at + medicine.min_interval_minutes.minutes : now - 1
   end
 
   # When the dose that is currently blocking the limit leaves the window.
   def slot_frees_at
-    doses_in_window[count - medicine.max_doses_per_24h].given_at + WINDOW
+    return now.tomorrow.beginning_of_day if medicine.scheduled?
+
+    doses_in_window[count - medicine.target].given_at + WINDOW
   end
 end

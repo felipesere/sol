@@ -38,6 +38,6 @@ class MedicinesController < ApplicationController
   end
 
   def medicine_params
-    params.expect(medicine: %i[name dose_amount dose_unit min_interval_minutes max_doses_per_24h active])
+    params.expect(medicine: %i[name dose_amount dose_unit min_interval_minutes max_doses_per_24h kind doses_per_day course_days active])
   end
 end

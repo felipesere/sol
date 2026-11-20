@@ -117,7 +117,7 @@ export default class extends Controller {
               title: (items) => clock(items[0].raw.at),
               label: (item) => {
                 const r = item.raw
-                return r.kind === "temperature" ? `${r.y.toFixed(1)} °C · ${r.by}` : `${item.dataset.label} ${r.amount} ${r.unit} · ${r.by}`
+                return r.kind === "temperature" ? `${r.y.toFixed(1)} °C · ${r.by}` : `${item.dataset.label} ${r.unit === "count" ? `${r.amount}×` : `${r.amount} ${r.unit}`} · ${r.by}`
               }
             }
           }

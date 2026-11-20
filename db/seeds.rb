@@ -8,6 +8,7 @@ felipe = User.household("Felipe")
 mira = Child.find_or_create_by!(name: "Mira") { |c| c.birth_date = Date.new(2023, 3, 2) }
 paracetamol = mira.medicines.find_or_create_by!(name: "Paracetamol") { |m| m.assign_attributes(dose_amount: 5, dose_unit: "ml", min_interval_minutes: 240, max_doses_per_24h: 4) }
 ibuprofen = mira.medicines.find_or_create_by!(name: "Ibuprofen") { |m| m.assign_attributes(dose_amount: 4, dose_unit: "ml", min_interval_minutes: 360, max_doses_per_24h: 3) }
+mira.medicines.find_or_create_by!(name: "Amoxicillin") { |m| m.assign_attributes(kind: :scheduled, dose_amount: 5, dose_unit: "ml", min_interval_minutes: 240, doses_per_day: 3, course_days: 10) }
 
 if mira.doses.none?
   now = Time.current

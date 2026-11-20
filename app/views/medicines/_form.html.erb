@@ -3,11 +3,22 @@
   <label class="grid gap-1.5"><span class="label">Name</span><%= f.text_field :name, class: "field", placeholder: "Paracetamol", required: true %></label>
   <div class="grid grid-cols-2 gap-3">
     <label class="grid gap-1.5"><span class="label">Dose</span><%= f.number_field :dose_amount, step: 0.5, min: 0, inputmode: "decimal", class: "field", required: true %></label>
-    <label class="grid gap-1.5"><span class="label">Unit</span><%= f.select :dose_unit, %w[ml mg tablet drop], {}, class: "field" %></label>
+    <label class="grid gap-1.5"><span class="label">Unit</span><%= f.select :dose_unit, %w[ml mg tablet drop count], {}, class: "field" %></label>
   </div>
-  <div class="grid grid-cols-2 gap-3">
+  <div data-controller="medicine-kind">
+    <label class="grid gap-1.5"><span class="label">Kind</span>
+      <%= f.select :kind, [["As needed (e.g. paracetamol)", "as_needed"], ["Scheduled (e.g. antibiotic)", "scheduled"]], {}, class: "field", data: { medicine_kind_target: "select", action: "medicine-kind#toggle" } %>
+    </label>
+    <div class="grid gap-1.5 mt-4" data-medicine-kind-target="asNeeded">
+      <label class="grid gap-1.5"><span class="label">Max doses per 24 h</span><%= f.number_field :max_doses_per_24h, min: 1, inputmode: "numeric", class: "field", placeholder: "4" %></label>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mt-4" data-medicine-kind-target="scheduled" hidden>
+      <label class="grid gap-1.5"><span class="label">Doses per day</span><%= f.number_field :doses_per_day, min: 1, inputmode: "numeric", class: "field", placeholder: "3" %></label>
+      <label class="grid gap-1.5"><span class="label">Course length (days)</span><%= f.number_field :course_days, min: 1, inputmode: "numeric", class: "field", placeholder: "10" %></label>
+    </div>
+  </div>
+  <div class="grid gap-3">
     <label class="grid gap-1.5"><span class="label">Minutes between doses</span><%= f.number_field :min_interval_minutes, min: 0, step: 15, inputmode: "numeric", class: "field", placeholder: "240", required: true %></label>
-    <label class="grid gap-1.5"><span class="label">Max doses per 24 h</span><%= f.number_field :max_doses_per_24h, min: 1, inputmode: "numeric", class: "field", placeholder: "4", required: true %></label>
   </div>
   <label class="flex items-center gap-3"><%= f.check_box :active, class: "size-5" %><span>Active (untick to archive; past doses are kept)</span></label>
   <%= f.submit "Save medicine", class: "btn btn-primary" %>

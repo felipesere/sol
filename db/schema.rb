@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_193700) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_090000) do
   create_table "children", force: :cascade do |t|
     t.string "name", null: false
     t.date "birth_date"
@@ -39,10 +39,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_193700) do
     t.decimal "dose_amount", precision: 6, scale: 2, null: false
     t.string "dose_unit", default: "ml", null: false
     t.integer "min_interval_minutes", null: false
-    t.integer "max_doses_per_24h", null: false
+    t.integer "max_doses_per_24h"
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "kind", default: "as_needed", null: false
+    t.integer "doses_per_day"
+    t.integer "course_days"
+    t.date "started_on"
     t.index ["child_id"], name: "index_medicines_on_child_id"
   end
 

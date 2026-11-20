@@ -99,4 +99,39 @@ class DoseStatusTest < ActiveSupport::TestCase
     assert_equal :ok, status.state
     assert_equal 600.minutes.ago(@now), status.last_dose.given_at
   end
+
+  # Scheduled: 3 a day, at least 4h apart, 10 day course started 12 Nov (day 3 on the 14th)
+  test "scheduled medicines count the calendar day, not the last 24 hours" do
+    amoxicillin = medicines(:amoxicillin)
+    give(23 * 60, medicine: amoxicillin) # 23:00 yesterday
+    give(300, medicine: amoxicillin)     # 17:00 today
+
+    assert_equal 1, status(amoxicillin).count
+    assert_equal 2, status(amoxicillin).remaining
+    assert_equal :ok, status(amoxicillin).state
+  end
+
+  test "scheduled medicines are done for today at the target, until midnight" do
+    amoxicillin = medicines(:amoxicillin)
+    give(900, medicine: amoxicillin); give(600, medicine: amoxicillin); give(300, medicine: amoxicillin)
+
+    assert_equal :limit, status(amoxicillin).state
+    assert_equal Time.zone.local(2026, 11, 15), status(amoxicillin).next_allowed_at
+  end
+
+  test "a late dose last night still spaces out the first dose of the day" do
+    amoxicillin = medicines(:amoxicillin)
+    give(23 * 60, medicine: amoxicillin) # 23:00 yesterday, 23h ago: interval long passed
+
+    assert_equal :ok, status(amoxicillin).state
+    assert_equal 0, status(amoxicillin).count
+  end
+
+  test "a scheduled course finishes after its days" do
+    amoxicillin = medicines(:amoxicillin)
+
+    assert_equal 3, amoxicillin.course_day(@now.to_date)
+    assert_equal :ok, status(amoxicillin).state
+    assert_equal :finished, DoseStatus.new(amoxicillin, now: @now + 8.days).state
+  end
 end

@@ -21,3 +21,14 @@ theos_paracetamol:
   dose_unit: ml
   min_interval_minutes: 240
   max_doses_per_24h: 4
+
+amoxicillin:
+  child: mira
+  name: Amoxicillin
+  kind: scheduled
+  dose_amount: 5
+  dose_unit: ml
+  min_interval_minutes: 240
+  doses_per_day: 3
+  course_days: 10
+  started_on: <%= Date.new(2026, 11, 12) %>

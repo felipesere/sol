@@ -91,6 +91,21 @@ class LoggingTest < ActionDispatch::IntegrationTest
     assert_equal 1, juno.medicines.count
   end
 
+  test "adding a scheduled medicine shows progress for today on the dashboard" do
+    post child_medicines_path(@mira), params: { medicine: { name: "Spray", kind: "scheduled", dose_amount: 1, dose_unit: "drop", min_interval_minutes: 240, doses_per_day: 3, course_days: 7, active: "1" } }
+    spray = @mira.medicines.find_by!(name: "Spray")
+    assert spray.scheduled?
+    assert_equal Time.zone.today, spray.started_on
+
+    get child_path(@mira)
+    assert_match "0 of 3", response.body
+    assert_match "day 1 of 7", response.body
+
+    Dose.create!(child: @mira, medicine: spray, user: users(:felipe), given_at: Time.current, amount: 1)
+    get child_path(@mira)
+    assert_match "1 of 3", response.body
+  end
+
   test "archived medicines disappear from the dashboard but keep their doses" do
     Dose.create!(child: @mira, medicine: @para, user: users(:felipe), given_at: 1.hour.ago, amount: 5)
     patch child_medicine_path(@mira, @para), params: { medicine: { active: "0" } }

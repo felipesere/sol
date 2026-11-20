@@ -11,7 +11,7 @@
         <% style = medicine_style(@child, medicine) %>
         <%= link_to new_child_dose_path(@child, medicine_id: medicine.id), class: "chip", "aria-current": (medicine == @medicine).to_s do %>
           <span class="flex items-center gap-2 font-semibold"><span class="mark <%= style[:mark] %>" style="--c: var(<%= style[:color] %>)"></span><%= medicine.name %></span>
-          <span class="pill <%= tone %>"><%= st.ok? ? "Ready now" : "#{label} until #{clock(st.next_allowed_at)}" %></span>
+          <span class="pill <%= tone %>"><%= st.ok? ? "Ready now" : st.state == :finished ? label : "#{label} until #{clock(st.next_allowed_at)}" %></span>
         <% end %>
       <% end %>
     </fieldset>
@@ -21,7 +21,7 @@
   <% end %>
 
   <div class="grid grid-cols-2 gap-3">
-    <label class="grid gap-1.5"><span class="label">Amount (<%= @medicine&.dose_unit %>)</span>
+    <label class="grid gap-1.5"><span class="label"><%= @medicine&.dose_unit == "count" ? "Times" : "Amount (#{@medicine&.dose_unit})" %></span>
       <%= f.number_field :amount, step: 0.5, min: 0, inputmode: "decimal", class: "field", required: true %>
     </label>
     <label class="grid gap-1.5"><span class="label">Given at</span>
@@ -31,9 +31,13 @@
 
   <% if dose.new_record? && status && !status.ok? %>
     <p class="flash">
-      <%= @medicine.name %> was given <%= ago(status.last_dose.given_at) %>.
-      <% if status.state == :limit %>It has reached <%= @medicine.max_doses_per_24h %> doses in 24 hours.<% end %>
-      The next dose is allowed at <%= clock(status.next_allowed_at) %>. Record it only if it was already given.
+      <% if status.state == :finished %>
+        The <%= @medicine.course_days %> day course of <%= @medicine.name %> has finished. Record a dose only if it was really given.
+      <% else %>
+        <%= @medicine.name %> was given <%= ago(status.last_dose.given_at) %>.
+        <% if status.state == :limit %>It has reached <%= @medicine.target %> doses <%= @medicine.scheduled? ? "today" : "in 24 hours" %>.<% end %>
+        The next dose is allowed at <%= clock(status.next_allowed_at) %>. Record it only if it was already given.
+      <% end %>
     </p>
   <% end %>
 
